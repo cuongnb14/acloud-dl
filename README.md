@@ -76,6 +76,7 @@ You can download the latest version of acloud-dl by cloning the GitHub repositor
 ***Download a course***
 
     python acloud-dl.py -c file_containing_cookie.txt
+    python acloud-dl.py -c file_containing_cookie.txt -s "search by title"
 
 ***Download all courses***
 

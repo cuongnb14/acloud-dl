@@ -261,7 +261,7 @@ class CloudGuru(WebVtt2Srt, ProgressBar, GetPass):
         # Return the selected pages list
         return selected_courses
 
-    def course_download(self, path='', quality='', user_extension='', download_all=False, download_only_new=False):
+    def course_download(self, path='', quality='', user_extension='', download_all=False, download_only_new=False, search=None):
         sys.stdout.write(
             '\033[2K\033[1G\r\r' + fc + sd + "[" + fm + sb + "*" + fc + sd + "] : " + fg + sb + "Downloading accessible courses information .. \r")
         courses = self.courses_not_downloaded(acloud.courses(cookies=self.cookies), path, download_only_new)
@@ -272,7 +272,12 @@ class CloudGuru(WebVtt2Srt, ProgressBar, GetPass):
             counter = 1
             for course in courses:
                 title = course.title
-                sys.stdout.write(fc + sd + "[" + fm + sb + "%s" % counter + fc + sd + "] : " + fg + sb + "%s\n" % title)
+                if search:
+                    if search.lower() in title.lower():
+                        sys.stdout.write(fc + sd + "[" + fm + sb + "%s" % counter + fc + sd + "] : " + fg + sb + "%s\n" % title)
+                else:
+                    sys.stdout.write(fc + sd + "[" + fm + sb + "%s" % counter + fc + sd + "] : " + fg + sb + "%s\n" % title)
+
                 counter += 1
             question = fc + sd + "[" + fw + sb + "?" + fc + sd + "] : " + fy + sb + "select course number or range (1/%s/range 1-3,5): " % (
                 len(courses)) + fg + sb
@@ -360,6 +365,11 @@ def main():
         help="Cookies to authenticate with.", metavar='')
     advance = parser.add_argument_group("Advance")
     advance.add_argument(
+        '-s', '--search',
+        dest='search',
+        type=str,
+        help="Search cource by title.", metavar='')
+    advance.add_argument(
         '-o', '--output',
         dest='output',
         type=str,
@@ -412,7 +422,8 @@ def main():
                 cloud_guru.course_download(path=options.output, quality=options.quality,
                                            user_extension=options.extension,
                                            download_all=options.download_all,
-                                           download_only_new=options.download_only_new)
+                                           download_only_new=options.download_only_new,
+                                           search=options.search)
 
         else:
             sys.stdout.write(
@@ -434,7 +445,8 @@ def main():
                 cloud_guru.course_download(path=options.output, quality=options.quality,
                                            user_extension=options.extension,
                                            download_all=options.download_all,
-                                           download_only_new=options.download_only_new)
+                                           download_only_new=options.download_only_new, 
+                                           search=options.search)
         else:
             sys.stdout.write(
                 '\n' + fc + sd + "[" + fr + sb + "-" + fc + sd + "] : " + fr + sb + "unable to find file '%s'.\n" % options.cookies)
